@@ -1,0 +1,8 @@
+# do not track these folders and files in git
+
+venv/
+
+.env
+
+*.db
+instance/
