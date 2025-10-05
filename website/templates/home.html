@@ -1,6 +1,45 @@
 {% extends "base.html" %} {% block title %}Home{% endblock %}
 
 {% block content %}
-<h1>This is the home page</h1>
-<h1>{{ msg }}</h1>
+<h1 align="center" class="text-primary p-3">A Visit from El Chupacabras!</h1>
+<div class="card mb-3
+    {% if outcome == 'lost' %} text-bg-danger
+    {% elif outcome == 'won' %} text-bg-success
+    {% else %} text-bg-light
+    {% endif %}
+    ">
+  <div class="card-header">Game text</div>
+  <div class="card-body">
+    {% if messages %}
+      {% for message in messages %}
+        <p class="card-text">{{ message.replace('\n', '<br>')|safe }}</p>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+
+{% if not outcome %}
+    <form method="POST">
+        <input type="text" name="command" id="command" class="form-control" autofocus>
+        <br>
+        <div align="center">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+    <br>
+    <div class="card text-bg-light mb-3" style="max-width: 18rem;">
+      <div class="card-header">Player Status</div>
+      <div class="card-body">
+        <p class="card-text">{{ player_status }}</p>
+      </div>
+    </div>
+{% elif outcome == 'lost' %}
+    <div class="alert alert-danger mt-3" role="alert">
+        <h1><a href="{{ url_for('views.reset_game') }}">Play again</a></h1>
+    </div>
+{% elif outcome == 'won'%}
+    <div class="alert alert-success mt-3" role="alert">
+      <h1><a href="{{ url_for('views.reset_game') }}">Play again</a></h1>
+    </div>
+{% endif %}
 {% endblock %}

@@ -1,22 +1,18 @@
-from game_classes.game import Game
-from website import create_app
-
-app = create_app()
-
 # Code by Angela Karina Vegega Ortiz
-# Enhancement Two - September 28, 2025.
-# Refactored the Rooms dictionary into a graph data structure connected by
-# rooms and the direction they are connected in. Used a breadth-first search
-# (BFS) algorithm to create a hints function so players can get hints in the
-# form of cardinal directions to the closest room with an item from their
-# current room. Players can use hints up to three times.
+# Enhancement Three - October 5, 2025.
+# This game was initially played in the console. Enhancement three included
+# adding a database to hold user data, user validation with passwords,
+# creating a graphical user interface to turn this game into a full stack
+# application that can be hosted online, and adding a Scoreboards page to
+# show the user's best completion times.
 #
-# This is a text based adventure game_classes called A Visit from El Chupacabras.
+# This is a text based adventure game called A Visit from El Chupacabras.
 # Users must type commands to progress the story. Their commands must start
 # with 'go' or 'get'. The goal is to move from room to room collecting items
 # before reaching the Chupacabras. If the player collected all the items,
-# they win the game_classes. Whether they win or lose, they can choose to start
-# a new game_classes.
+# they win the game. Whether they win or lose, they can choose to start
+# a new game.
+# The game can be demoed logging in with username demo and password demo1234
 #
 # I used articles by Lavasani (2023) and Rodriguez (2019) to research and
 # adapt the Factory pattern for creating rooms.
@@ -25,14 +21,24 @@ app = create_app()
 # and StackOverflow (Python - Create a Graph From a Dictionary, 2019), to
 # guide me in creating the graph data structure and using BFS algorithm to
 # find the shortest path for the hint functionality.
+# I used and adapted Tech With Tim's (2021) tutorial to guide me in adding
+# user validation and creating a full stack python application. I referenced
+# the Flask (Welcome to Flask — Flask Documentation (3.1.x), n.d.), Bootstrap
+# (Bootstrap team, n.d.), SQLAlchemy (SQLAlchemy 2.0 Documentation, 2025),
+# and Jinja (Jinja Documentation (3.1.x), n.d.) documentation while creating
+# the app to debug and build it out.
 #
 # References:
+# Bootstrap team. (n.d.). Get started with Bootstrap.
+#   https://getbootstrap.com/docs/5.3/getting-started/introduction/
 # Finding the shortest path in graphs with BFS algorithm. (n.d.).
 #   CodeSignal.
 #   https://codesignal.com/learn/courses/mastering-graphs-in-python/lessons/finding-the-shortest-path-in-graphs-with-bfs-algorithm
 # GeeksforGeeks. (2025, July 15). Building an undirected graph and finding
 #   shortest path using dictionaries in Python. GeeksforGeeks.
 #   https://www.geeksforgeeks.org/python/building-an-undirected-graph-and-finding-shortest-path-using-dictionaries-in-python/
+# Jinja Documentation (3.1.x). (n.d.).
+#   https://jinja.palletsprojects.com/en/stable/
 # Lavasani, A. (2023, September 17). Design Patterns in Python: Factory Method.
 #   Medium.
 #   https://medium.com/@amirm.lavasani/design-patterns-in-python-factory-method-1882d9a06cb4
@@ -42,31 +48,20 @@ app = create_app()
 # Rodriguez, I. (2019, February 11). The Factory Method Pattern and its
 #   implementation in Python. Real Python.
 #   https://realpython.com/factory-method-python/
+# SQLAlchemy 2.0 Documentation. (2025, August 11).
+#   https://docs.sqlalchemy.org/en/20/
+# Tech With Tim. (2021, February 1). Python website full tutorial - flask,
+#   authentication, databases & more [Video]. YouTube.
+#   https://www.youtube.com/watch?v=dam0GPOAvVI
 # W3Schools.com. (n.d.). https://www.w3schools.com/python/python_dsa_graphs.asp
-#
+# Welcome to Flask — Flask Documentation (3.1.x). (n.d.).
+#   https://flask.palletsprojects.com/en/stable/
+"""
+Main entry point for the Flask application
+"""
+from website import create_app
 
-
-def main():
-    """
-    The entry point for the game_classes. Creates a Game object and starts the game_classes
-    loop. Restarts the game_classes if the player ended the previous game_classes and presses
-    "y", or ends the game_classes and prints a goodbye message.
-
-    :return: Nothing
-    :rtype: None
-    """
-    replay_game = True
-
-    while replay_game:
-        game = Game()
-        game.play()
-
-        start_over_input = input("\nDo you want to play again? y/n\n")
-        if start_over_input.lower() != "y":
-            print("Thank you for playing!")
-            break
-
+app = create_app()
 
 if __name__ == '__main__':
     app.run(debug=True)
-    main()

@@ -79,18 +79,16 @@ def sign_up():
         elif len(password1) < 7:
             flash('Password must be at least 7 characters.', category='error')
         else:
-            print(f"creating user: {username} with email: {email}")
             try:
                 new_user = User(email=email,
                                 password=generate_password_hash(password1),
                                 username=username)
-                print("user creation success!")
                 db.session.add(new_user)
                 db.session.commit()
-                login_user(user_username, remember=True)
+                login_user(new_user, remember=True)
                 flash('Account created!', category='success')
             except Exception as e:
-                print(f"problems with {e}")
+                print(f"Error adding user record: {e}")
             return redirect(url_for('views.home'))
 
     return render_template("sign_up.html", user=current_user)

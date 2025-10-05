@@ -1,5 +1,5 @@
-# rooms_config defines all the rooms in the game_classes. Each key is a room name and
-# each value is a dictionary with the name (str) of the room, item
+# rooms_config defines all the rooms in the game_classes. Each key is a room
+# name and each value is a dictionary with the name (str) of the room, item
 # (dict or None) with the item name and use, and exits (dict) with the cardinal
 # directions and name of the rooms they lead to
 rooms_config = {

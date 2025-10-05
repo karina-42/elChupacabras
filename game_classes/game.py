@@ -1,10 +1,11 @@
+from datetime import datetime
 from factories.graph_factory import GraphFactory
 from game_classes.player import Player
 
 
 class Game:
     """
-    A class to represent and handle the flow of the game_classes.
+    A class to represent and handle the flow of the game.
 
     Attributes:
         rooms (dict): A dictionary of all Rooms
@@ -13,13 +14,15 @@ class Game:
             player must pick up all items to win. This variable is used to
             compare against the number of items the player has in their
             inventory.
+        start_time (DateTime): The time the player started a game
+        end_time (DateTime): The time the player ended a game by winning it
 
     Methods:
         get_hint(current_room): Use the breadth-first search (BFS) algorithm
             to search through the rooms to find the closest room that has an
             item. Players can use this function up to three times.
         display_opening_message(): Returns a list of messages to welcome the
-            player to the game_classes, give the story and context, and explain
+            player to the game, give the story and context, and explain
             how to play.
         display_player_status(): Returns the string returned from the player's
             get_player_status method
@@ -35,17 +38,14 @@ class Game:
             calls the appropriate function to handle their command.
         player_outcome(): Checks if the player has reached the room that
             the Chupacabras is in and whether they have the right number of
-            items needed to win the game_classes.
-        play(): This method controls the flow of the game_classes by calling methods
-            in a while loop until the game_classes is finished. It prints the opening
-            messages, player status and room status. It takes the user input,
-            checking if it is "q" for quitting the game_classes. It calls the
-            process_command method, printing the results followed by a text
-            divider for ease of reading. It prints the winning or losing
-            message before ending the game_classes.
+            items needed to win the game.
+        start_timer(): Check if a starting time has been assigned to
+        start_time, if not, then assign the current time to start_time.
+        get_elapsed_time(): Get the player outcome, stop the timer if the
+            player finished the game. Calculate and assign the elapsed time to
+            elapsed_time. Return the elapsed seconds
     """
-    TEXT_DIVIDER = "-" * 30
-    WELCOME_MESSAGE = "A Visit from El Chupacabras!"
+
     GAME_INFO = (
         "El chupacabras has come to suck the blood of your livestock! Move "
         "throughout your house and collect 6 items before coming face to "
@@ -58,12 +58,7 @@ class Game:
                         "an item, you can type 'hint' to get cardinal" \
                         " directions to the closest room with an item. " \
                         "Please type each direction one by one."
-    QUIT_AND_REPLAY_INSTRUCTIONS = "To quit the game_classes at any time, please " \
-                                   "type 'q'. To replay the game_classes after " \
-                                   "quitting or finishing it, please type " \
-                                   "'y'. Type 'n' to stop the game_classes completely."
     VALIDATION_MESSAGE = "Please enter a valid move."
-    EXIT_MESSAGE = "Thanks for playing, hope you had fun!"
     WINNING_MESSAGE = "You see el Chupacabras!\nYou toss the goat plushie " \
                       "by its feet. While it's investigating it, you squirt" \
                       " shampoo into its eyes, knock it out with your " \
@@ -84,6 +79,8 @@ class Game:
         self.rooms = graph_factory.create_game_world()
         first_room = self.rooms["bedroom"]
         self.player = Player(first_room)
+        self.start_time = None
+        self.end_time = None
 
         # Count how many items are in the house, the player must collect all
         # items before facing the Chupacabras to win
@@ -139,20 +136,17 @@ class Game:
 
     def display_opening_message(self):
         """
-        Returns a list of messages to welcome the player to the game_classes, give
-        the story and context, and explain how to play.
+        Returns a list of messages to welcome the player to the game,
+        give the story and context, and explain how to play.
 
         :return: The list of messages joined into a string with newlines
         :rtype: str
         """
         messages = [
-            self.WELCOME_MESSAGE,
             self.GAME_INFO,
             self.MOVING_INSTRUCTIONS,
             self.ITEM_INSTRUCTIONS,
-            self.HINT_INSTRUCTIONS,
-            self.QUIT_AND_REPLAY_INSTRUCTIONS,
-            self.TEXT_DIVIDER
+            self.HINT_INSTRUCTIONS
         ]
         return "\n".join(messages)
 
@@ -209,7 +203,7 @@ class Game:
         to handle their command.
 
         :param user_input: The user input of what they want to do next in the
-            game_classes. It should start with "go", "get", or hint.
+            game. It should start with "go", "get", or hint.
         :type user_input: str
         :return: The confirmation message returned from the function called
             according to the input, or a validation message if the input was
@@ -217,6 +211,7 @@ class Game:
         :rtype: str
         """
         command = user_input.lower().strip().split()
+
         if len(command) == 0:
             return self.VALIDATION_MESSAGE
 
@@ -242,10 +237,11 @@ class Game:
     def player_outcome(self):
         """
         Checks if the player has reached the room that the Chupacabras is in
-        and whether they have the right number of items needed to win the game_classes.
+        and whether they have the right number of items needed to win the game.
 
         :return: A string signaling if the player won or lost, or None to
-            continue the game_classes until the player reaches the Chupacabra's room.
+            continue the game until the player reaches the
+            Chupacabra's room.
         :rtype: str or None
         """
         if self.player.current_room.name == "backyard":
@@ -256,36 +252,31 @@ class Game:
         else:
             return None
 
-    def play(self):
+    def start_timer(self):
         """
-        This method controls the flow of the game_classes by calling methods in a
-        while loop until the game_classes is finished. It prints the opening messages,
-        player status and room status. It takes the user input, checking if it
-        is "q" for quitting the game_classes. It calls the process_command method,
-        printing the results followed by a text divider for ease of reading.
-        It prints the winning or losing message before ending the game_classes.
+        Check if a starting time has been assigned to start_time, if not, then
+        assign the current time to start_time.
 
         :return: Nothing
         :rtype: None
         """
-        print(self.display_opening_message())
-        game_is_finished = False
+        now = datetime.now()
+        if self.start_time is None:
+            self.start_time = now
 
-        while not game_is_finished:
-            print(self.display_player_status())
-            print(self.display_room_status(self.player.current_room.name))
-            user_command = input("Enter your command:\n")
-            if user_command.lower() == "q":
-                game_is_finished = True
-            else:
-                print(self.process_command(user_command))
-            print(self.TEXT_DIVIDER)
-            player_outcome = self.player_outcome()
-            if player_outcome == "lost":
-                print(self.LOSING_MESSAGE)
-                game_is_finished = True
-            elif player_outcome == "won":
-                print(self.WINNING_MESSAGE)
-                game_is_finished = True
-            else:
-                continue
+    def get_elapsed_time(self):
+        """
+        Get the player outcome, stop the timer if the player finished the game.
+        Calculate and assign the elapsed time to elapsed_time. Return the
+        elapsed seconds, else None
+
+        :return: Elapsed time in total seconds or nothing
+        :rtype: float, None
+        """
+        outcome = self.player_outcome()
+        now = datetime.now()
+        if outcome in ['won', 'lost']:
+            self.end_time = now
+            if self.start_time and outcome == 'won':
+                elapsed_time = self.end_time - self.start_time
+                return elapsed_time.total_seconds()

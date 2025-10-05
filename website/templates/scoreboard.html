@@ -1,5 +1,18 @@
 {% extends "base.html" %} {% block title %}Scoreboard{% endblock %}
 
 {% block content %}
-<h1>This is the scoreboard page</h1>
+<h1 align="center" class="text-primary p-3">Scoreboard</h1>
+<ul class="list-group list-group-flush" id="notes">
+    {% for record in records %}
+        {% if record.elapsed_time %}
+            <li class="list-group-item">
+                {{ "{:.2f}".format(record.elapsed_time) }} seconds recorded on
+                {{ record.date.strftime('%B %d, %Y') }} at
+                {{ record.date.strftime('%I:%M %p') }}
+            </li>
+        {% else %}
+            <p>No time records</p>
+        {% endif %}
+    {% endfor %}
+</ul>
 {% endblock %}
